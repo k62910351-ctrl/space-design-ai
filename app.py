@@ -74,20 +74,24 @@ def call_gemini_stream(api_key: str, system_prompt: str, parts: list,
                        model_name: str, placeholder) -> str:
     client = genai.Client(api_key=api_key)
     result = ""
-    for chunk in client.models.generate_content_stream(
-        model=model_name,
-        contents=parts,
-        config=types.GenerateContentConfig(
-            system_instruction=system_prompt,
-            max_output_tokens=4096,
-        ),
-    ):
-        try:
-            if chunk.text:
-                result += chunk.text
-                placeholder.markdown(result + "▌")
-        except Exception:
-            pass
+    try:
+        for chunk in client.models.generate_content_stream(
+            model=model_name,
+            contents=parts,
+            config=types.GenerateContentConfig(
+                system_instruction=system_prompt,
+                max_output_tokens=4096,
+            ),
+        ):
+            try:
+                if chunk.text:
+                    result += chunk.text
+                    placeholder.markdown(result + "▌")
+            except Exception:
+                pass
+    except Exception as e:
+        st.error(f"❌ API 오류 상세: {str(e)}")
+        st.stop()
     placeholder.markdown(result)
     return result
 
