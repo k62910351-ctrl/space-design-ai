@@ -60,11 +60,11 @@ def build_file_parts(uploaded_files) -> list:
 
         elif name.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")):
             text_blocks.append(f"[이미지 파일: {name}] — 이미지 내 텍스트와 시각적 내용을 모두 분석해주세요.")
-            image_parts.append(types.Part.from_bytes(data=raw, mime_type=get_media_type(name)))
+            image_parts.append(types.Part(inline_data=types.Blob(data=raw, mime_type=get_media_type(name))))
 
     parts = []
     if text_blocks:
-        parts.append(types.Part.from_text("\n\n".join(text_blocks)))
+        parts.append(types.Part(text="\n\n".join(text_blocks)))
     parts.extend(image_parts)
     return parts
 
@@ -266,7 +266,7 @@ def main():
         st.header("📋 1단계: RFP 분석")
         with st.expander("분석 결과", expanded=True):
             ph = st.empty()
-            rfp_parts = [types.Part.from_text(RFP_INSTRUCTION)] + file_parts
+            rfp_parts = [types.Part(text=RFP_INSTRUCTION)] + file_parts
             results["rfp"] = call_gemini_stream(
                 api_key, SYSTEMS["rfp"], rfp_parts, model, ph
             )
@@ -278,7 +278,7 @@ def main():
             ph = st.empty()
             results["concept"] = call_gemini_stream(
                 api_key, SYSTEMS["concept"],
-                [types.Part.from_text(f"{CONCEPT_INSTRUCTION}\n\n---\n{results['rfp']}")],
+                [types.Part(text=f"{CONCEPT_INSTRUCTION}\n\n---\n{results['rfp']}")],
                 model, ph
             )
         st.success("✅ 컨셉 도출 완료")
@@ -289,7 +289,7 @@ def main():
             ph = st.empty()
             results["keywords"] = call_gemini_stream(
                 api_key, SYSTEMS["keywords"],
-                [types.Part.from_text(f"{KEYWORDS_INSTRUCTION}\n\n---\n{results['concept']}")],
+                [types.Part(text=f"{KEYWORDS_INSTRUCTION}\n\n---\n{results['concept']}")],
                 model, ph
             )
         st.success("✅ 키워드 및 무드보드 완료")
@@ -301,7 +301,7 @@ def main():
             context = f"[RFP 분석]\n{results['rfp']}\n\n[디자인 컨셉]\n{results['concept']}"
             results["persona"] = call_gemini_stream(
                 api_key, SYSTEMS["persona"],
-                [types.Part.from_text(f"{PERSONA_INSTRUCTION}\n\n---\n{context}")],
+                [types.Part(text=f"{PERSONA_INSTRUCTION}\n\n---\n{context}")],
                 model, ph
             )
         st.success("✅ 페르소나 및 조닝 완료")
@@ -313,7 +313,7 @@ def main():
             context = f"[디자인 컨셉]\n{results['concept']}\n\n[조닝 계획]\n{results['persona']}"
             results["midjourney"] = call_gemini_stream(
                 api_key, SYSTEMS["midjourney"],
-                [types.Part.from_text(f"{MIDJOURNEY_INSTRUCTION}\n\n---\n{context}")],
+                [types.Part(text=f"{MIDJOURNEY_INSTRUCTION}\n\n---\n{context}")],
                 model, ph
             )
         st.success("✅ Midjourney 프롬프트 완료")
