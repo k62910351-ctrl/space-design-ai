@@ -212,8 +212,8 @@ def main():
         project_name = st.text_input("프로젝트명", placeholder="예: 강남 카페 리뉴얼 2025")
         model = st.selectbox(
             "AI 모델 선택",
-            ["gemini-2.0-flash", "gemini-2.5-pro"],
-            help="2.0-flash: 빠름 (권장) | 2.5-pro: 최고 품질"
+            ["gemini-2.5-flash", "gemini-2.5-pro"],
+            help="2.5-flash: 빠름 (권장) | 2.5-pro: 최고 품질"
         )
         st.divider()
         st.markdown("**지원 파일 형식**")
