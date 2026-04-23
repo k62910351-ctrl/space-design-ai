@@ -91,7 +91,6 @@ def call_claude_stream(client: anthropic.Anthropic, system: str,
         max_tokens=4096,
         system=system,
         messages=messages,
-        betas=["prompt-caching-2024-07-31"],
     ) as stream:
         for chunk in stream.text_stream:
             result += chunk
