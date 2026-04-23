@@ -15,6 +15,124 @@ st.set_page_config(
     layout="wide"
 )
 
+# ── 단계별 그래픽 ──────────────────────────────────────────
+
+def show_stage_graphic(stage: int):
+    if stage == 2:
+        # 3가지 디자인 방향성 — 기하 도형으로 표현
+        st.markdown("""
+        <div style="display:flex;gap:24px;justify-content:center;align-items:flex-end;
+                    margin:24px 0 8px;">
+            <div style="text-align:center;">
+                <div style="width:72px;height:72px;
+                            background:linear-gradient(135deg,#1C2B3A,#4A6FA5);
+                            border-radius:6px;margin:0 auto 8px;"></div>
+                <span style="font-size:11px;color:#888;">기하 / 모던</span>
+            </div>
+            <div style="text-align:center;">
+                <div style="width:72px;height:72px;
+                            background:linear-gradient(135deg,#6B4F3A,#C4A882);
+                            border-radius:50%;margin:0 auto 8px;"></div>
+                <span style="font-size:11px;color:#888;">유기 / 자연</span>
+            </div>
+            <div style="text-align:center;">
+                <div style="width:0;height:0;
+                            border-left:36px solid transparent;
+                            border-right:36px solid transparent;
+                            border-bottom:72px solid #2D5A3D;
+                            margin:0 auto 8px;
+                            filter:drop-shadow(0 2px 4px rgba(45,90,61,0.3));"></div>
+                <span style="font-size:11px;color:#888;">역동 / 대담</span>
+            </div>
+        </div>
+        <p style="text-align:center;color:#aaa;font-size:12px;margin-bottom:20px;">
+            아래 3가지 컨셉 중 하나를 선택하세요
+        </p>
+        """, unsafe_allow_html=True)
+
+    elif stage == 3:
+        # 무드보드 3방향 — 컬러 스트라이프로 표현
+        st.markdown("""
+        <div style="display:flex;flex-direction:column;gap:6px;margin:24px 0 8px;">
+            <div style="display:flex;gap:4px;height:20px;border-radius:4px;overflow:hidden;">
+                <div style="flex:3;background:#E8DCC8;"></div>
+                <div style="flex:2;background:#C4A882;"></div>
+                <div style="flex:1;background:#8B7355;"></div>
+                <div style="flex:1;background:#5C4A2A;"></div>
+                <div style="flex:2;background:#F5F0E8;"></div>
+            </div>
+            <div style="display:flex;gap:4px;height:20px;border-radius:4px;overflow:hidden;">
+                <div style="flex:2;background:#1C2B3A;"></div>
+                <div style="flex:2;background:#4A6FA5;"></div>
+                <div style="flex:1;background:#7A9CC4;"></div>
+                <div style="flex:2;background:#D0DCE8;"></div>
+                <div style="flex:1;background:#F0F4F8;"></div>
+            </div>
+            <div style="display:flex;gap:4px;height:20px;border-radius:4px;overflow:hidden;">
+                <div style="flex:2;background:#2D5A3D;"></div>
+                <div style="flex:1;background:#5A8A6A;"></div>
+                <div style="flex:2;background:#A8C8A0;"></div>
+                <div style="flex:1;background:#D4E8D0;"></div>
+                <div style="flex:2;background:#F5F8F4;"></div>
+            </div>
+        </div>
+        <div style="display:flex;justify-content:space-around;margin-bottom:20px;">
+            <span style="font-size:11px;color:#888;">Option A · 웜 내추럴</span>
+            <span style="font-size:11px;color:#888;">Option B · 쿨 모던</span>
+            <span style="font-size:11px;color:#888;">Option C · 바이오필릭</span>
+        </div>
+        """, unsafe_allow_html=True)
+
+    elif stage == 4:
+        # 페르소나 + 조닝 — 사람 아이콘 + 플로어플랜 그리드
+        st.markdown("""
+        <div style="display:flex;gap:24px;justify-content:center;
+                    align-items:center;margin:24px 0 16px;">
+            <div style="display:flex;gap:12px;">
+                <div style="text-align:center;">
+                    <svg width="40" height="52" viewBox="0 0 40 52"
+                         fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="12" r="10" fill="#4A6FA5"/>
+                        <path d="M4 48 Q4 28 20 28 Q36 28 36 48"
+                              fill="#4A6FA5" opacity="0.7"/>
+                    </svg>
+                    <div style="font-size:10px;color:#888;margin-top:4px;">페르소나 1</div>
+                </div>
+                <div style="text-align:center;">
+                    <svg width="40" height="52" viewBox="0 0 40 52"
+                         fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="12" r="10" fill="#8B7355"/>
+                        <path d="M4 48 Q4 28 20 28 Q36 28 36 48"
+                              fill="#8B7355" opacity="0.7"/>
+                    </svg>
+                    <div style="font-size:10px;color:#888;margin-top:4px;">페르소나 2</div>
+                </div>
+                <div style="text-align:center;">
+                    <svg width="40" height="52" viewBox="0 0 40 52"
+                         fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="12" r="10" fill="#2D5A3D"/>
+                        <path d="M4 48 Q4 28 20 28 Q36 28 36 48"
+                              fill="#2D5A3D" opacity="0.7"/>
+                    </svg>
+                    <div style="font-size:10px;color:#888;margin-top:4px;">페르소나 3</div>
+                </div>
+            </div>
+            <div style="font-size:24px;color:#ccc;">→</div>
+            <div style="display:grid;grid-template-columns:1.5fr 1fr;
+                        grid-template-rows:1fr 1fr;gap:4px;width:100px;height:80px;">
+                <div style="background:#4A6FA5;border-radius:3px;grid-row:1/3;
+                            display:flex;align-items:center;justify-content:center;
+                            color:white;font-size:9px;font-weight:600;">MAIN</div>
+                <div style="background:#8B7355;border-radius:3px;
+                            display:flex;align-items:center;justify-content:center;
+                            color:white;font-size:9px;">A</div>
+                <div style="background:#2D5A3D;border-radius:3px;
+                            display:flex;align-items:center;justify-content:center;
+                            color:white;font-size:9px;">B</div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
 # ── API 키 ─────────────────────────────────────────────────
 
 def get_api_key() -> str:
@@ -163,27 +281,46 @@ SYSTEMS = {
     "midjourney": "당신은 AI 이미지 생성 전문가이자 공간 렌더링 전문가입니다. Midjourney 프롬프트를 최적화합니다. 한국어 설명과 영어 프롬프트를 함께 제공하세요.",
 }
 
-RFP_INSTRUCTION = """다음 RFP 문서를 분석하여 아래 항목을 구조화해주세요.
+RFP_INSTRUCTION = """다음 RFP 문서를 분석하여 아래 6가지 항목을 구조화해주세요.
+명시되지 않은 항목은 문서 전체 맥락을 통해 합리적으로 추론하여 작성하고, 추론한 내용은 (추론) 표시를 붙여주세요.
 
 ## 📋 RFP 분석 결과
 
 ### 1. 프로젝트 개요
-- 프로젝트명 / 유형 / 공간 규모 및 위치 / 목적
+- 프로젝트명:
+- 공간 유형:
+- 위치 / 규모:
+- 프로젝트 목적:
+- 클라이언트:
 
-### 2. 클라이언트 정보
-- 클라이언트 특성 / 브랜드 아이덴티티
+### 2. 필요공간 및 프로그램
+- 필수 공간 목록 (각 공간의 기능 및 면적 비중 포함):
+- 공간 간 관계 및 동선:
+- 특수 요구사항:
 
-### 3. 타겟 사용자
-- 주요 사용자 그룹 / 행동 패턴
+### 3. 예산 범위
+- 명시된 예산:
+- 예산 우선순위 (추론 포함):
+- 제약 조건:
 
-### 4. 공간 요구사항
-- 필수 공간 구성 / 기능적 요구사항 / 제약조건
+### 4. 일정 및 기한
+- 프로젝트 시작일:
+- 주요 마일스톤:
+- 최종 완료 기한:
+- 일정 리스크:
 
-### 5. 디자인 방향 힌트
-- 언급된 스타일/무드 / 레퍼런스
+### 5. 디자인 방향 키워드
+- 명시된 스타일 / 무드:
+- 레퍼런스 (언급된 경우):
+- 금지 또는 지양 요소:
+- 핵심 디자인 키워드 5개: `키워드1` `키워드2` `키워드3` `키워드4` `키워드5`
 
-### 6. 핵심 과제
-- 해결할 디자인 문제 / 기회 요소
+### 6. 추론된 클라이언트의 숨은 니즈
+> RFP에 명시되지 않았지만 문서 전체 맥락, 업종 특성, 클라이언트 유형 등을 종합해 추론한 진짜 니즈를 작성해주세요.
+- 비즈니스 관점의 숨은 목표:
+- 사용자 경험 관점의 기대:
+- 브랜드/이미지 관점의 기대:
+- 디자이너가 선제적으로 제안해야 할 사항:
 
 [첨부 RFP 문서]"""
 
@@ -451,6 +588,7 @@ def main():
             show_confirmed(2, "🎨 디자인 컨셉", st.session_state.concept, "선택된 컨셉")
         else:
             st.header("🎨 2단계: 디자인 컨셉")
+            show_stage_graphic(2)
             if not st.session_state.concept_draft:
                 with st.spinner("디자인 컨셉 3가지 생성 중..."):
                     ph = st.empty()
@@ -485,6 +623,7 @@ def main():
             show_confirmed(3, "🖼️ 키워드 & 무드보드", st.session_state.keywords, "선택된 키워드")
         else:
             st.header("🖼️ 3단계: 키워드 & 무드보드")
+            show_stage_graphic(3)
             if not st.session_state.keywords_draft:
                 with st.spinner("키워드 & 무드보드 3가지 방향 생성 중..."):
                     ph = st.empty()
@@ -520,6 +659,7 @@ def main():
             show_confirmed(4, "👥 페르소나 & 조닝", st.session_state.persona, "페르소나 & 조닝")
         else:
             st.header("👥 4단계: 페르소나 & 조닝 계획")
+            show_stage_graphic(4)
             if not st.session_state.persona_draft:
                 with st.spinner("페르소나 및 조닝 생성 중..."):
                     ph = st.empty()
