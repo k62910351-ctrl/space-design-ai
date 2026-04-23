@@ -5,7 +5,6 @@ import os
 from datetime import datetime
 import pdfplumber
 import io
-from PIL import Image
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -35,28 +34,38 @@ def extract_text_from_pdf(file_bytes: bytes) -> str:
                 text += page_text + "\n"
     return text.strip()
 
+def get_media_type(filename: str) -> str:
+    ext = filename.lower().rsplit(".", 1)[-1]
+    return {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png",
+            "gif": "image/gif", "webp": "image/webp"}.get(ext, "image/jpeg")
+
 def build_file_parts(uploaded_files) -> list:
-    parts = []
+    text_blocks = []
+    image_parts = []
+
     for file in uploaded_files:
         file.seek(0)
         raw = file.read()
         name = file.name
 
         if name.lower().endswith(".txt"):
-            parts.append(f"[텍스트 파일: {name}]\n{raw.decode('utf-8', errors='ignore')}")
+            text_blocks.append(f"[텍스트 파일: {name}]\n{raw.decode('utf-8', errors='ignore')}")
 
         elif name.lower().endswith(".pdf"):
             extracted = extract_text_from_pdf(raw)
             if extracted:
-                parts.append(f"[PDF 파일: {name}]\n{extracted}")
+                text_blocks.append(f"[PDF 파일: {name}]\n{extracted}")
             else:
-                parts.append(f"[PDF 파일: {name}]\n(텍스트 추출 불가 — 이미지 PDF)")
+                text_blocks.append(f"[PDF 파일: {name}]\n(텍스트 추출 불가 — 이미지 PDF)")
 
         elif name.lower().endswith((".jpg", ".jpeg", ".png", ".gif", ".webp")):
-            img = Image.open(io.BytesIO(raw))
-            parts.append(f"[이미지 파일: {name}] — 이미지 내 텍스트와 시각적 내용을 모두 분석해주세요.")
-            parts.append(img)
+            text_blocks.append(f"[이미지 파일: {name}] — 이미지 내 텍스트와 시각적 내용을 모두 분석해주세요.")
+            image_parts.append(types.Part.from_bytes(data=raw, mime_type=get_media_type(name)))
 
+    parts = []
+    if text_blocks:
+        parts.append(types.Part.from_text("\n\n".join(text_blocks)))
+    parts.extend(image_parts)
     return parts
 
 # ── Gemini 호출 ────────────────────────────────────────────
@@ -257,7 +266,7 @@ def main():
         st.header("📋 1단계: RFP 분석")
         with st.expander("분석 결과", expanded=True):
             ph = st.empty()
-            rfp_parts = [RFP_INSTRUCTION] + file_parts
+            rfp_parts = [types.Part.from_text(RFP_INSTRUCTION)] + file_parts
             results["rfp"] = call_gemini_stream(
                 api_key, SYSTEMS["rfp"], rfp_parts, model, ph
             )
@@ -269,7 +278,7 @@ def main():
             ph = st.empty()
             results["concept"] = call_gemini_stream(
                 api_key, SYSTEMS["concept"],
-                [f"{CONCEPT_INSTRUCTION}\n\n---\n{results['rfp']}"],
+                [types.Part.from_text(f"{CONCEPT_INSTRUCTION}\n\n---\n{results['rfp']}")],
                 model, ph
             )
         st.success("✅ 컨셉 도출 완료")
@@ -280,7 +289,7 @@ def main():
             ph = st.empty()
             results["keywords"] = call_gemini_stream(
                 api_key, SYSTEMS["keywords"],
-                [f"{KEYWORDS_INSTRUCTION}\n\n---\n{results['concept']}"],
+                [types.Part.from_text(f"{KEYWORDS_INSTRUCTION}\n\n---\n{results['concept']}")],
                 model, ph
             )
         st.success("✅ 키워드 및 무드보드 완료")
@@ -292,7 +301,7 @@ def main():
             context = f"[RFP 분석]\n{results['rfp']}\n\n[디자인 컨셉]\n{results['concept']}"
             results["persona"] = call_gemini_stream(
                 api_key, SYSTEMS["persona"],
-                [f"{PERSONA_INSTRUCTION}\n\n---\n{context}"],
+                [types.Part.from_text(f"{PERSONA_INSTRUCTION}\n\n---\n{context}")],
                 model, ph
             )
         st.success("✅ 페르소나 및 조닝 완료")
@@ -304,7 +313,7 @@ def main():
             context = f"[디자인 컨셉]\n{results['concept']}\n\n[조닝 계획]\n{results['persona']}"
             results["midjourney"] = call_gemini_stream(
                 api_key, SYSTEMS["midjourney"],
-                [f"{MIDJOURNEY_INSTRUCTION}\n\n---\n{context}"],
+                [types.Part.from_text(f"{MIDJOURNEY_INSTRUCTION}\n\n---\n{context}")],
                 model, ph
             )
         st.success("✅ Midjourney 프롬프트 완료")
