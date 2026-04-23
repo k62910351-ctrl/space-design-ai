@@ -1,5 +1,6 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 import os
 from datetime import datetime
 import pdfplumber
@@ -62,20 +63,23 @@ def build_file_parts(uploaded_files) -> list:
 
 def call_gemini_stream(api_key: str, system_prompt: str, parts: list,
                        model_name: str, placeholder) -> str:
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(
-        model_name=model_name,
-        system_instruction=system_prompt
-    )
+    client = genai.Client(api_key=api_key)
     result = ""
-    response = model.generate_content(parts, stream=True)
-    for chunk in response:
-        try:
-            if chunk.text:
-                result += chunk.text
-                placeholder.markdown(result + "▌")
-        except Exception:
-            pass
+    with client.models.generate_content_stream(
+        model=model_name,
+        contents=parts,
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            max_output_tokens=4096,
+        ),
+    ) as stream:
+        for chunk in stream:
+            try:
+                if chunk.text:
+                    result += chunk.text
+                    placeholder.markdown(result + "▌")
+            except Exception:
+                pass
     placeholder.markdown(result)
     return result
 
@@ -196,8 +200,8 @@ def main():
         project_name = st.text_input("프로젝트명", placeholder="예: 강남 카페 리뉴얼 2025")
         model = st.selectbox(
             "AI 모델 선택",
-            ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-1.5-pro"],
-            help="2.0-flash: 최신·빠름 (권장) | 1.5-pro: 높은 품질"
+            ["gemini-2.0-flash", "gemini-2.5-pro"],
+            help="2.0-flash: 빠름 (권장) | 2.5-pro: 최고 품질"
         )
         st.divider()
         st.markdown("**지원 파일 형식**")
